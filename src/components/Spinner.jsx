@@ -1,46 +1,46 @@
-import styled from 'styled-components'
+import { styled } from '@mui/material/styles'
 
-const SpinnerContainer = styled.div`
+const SpinnerContainer = styled('div')({
     /* position: absolute; */
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+})
 
-const StyledSpinner = styled.svg`
-    animation: rotate 1s linear infinite;
-    margin: 40px;
-    width: 80px;
-    height: 80px;
+const StyledSpinner = styled('svg')({
+    animation: 'rotate 1s linear infinite',
+    margin: '40px',
+    width: '80px',
+    height: '80px',
 
-    & .path {
-        stroke: #F27A1A;
-        stroke-linecap: round;
-        animation: dash 1.5s ease-in-out infinite;
-    }
+    '& .path': {
+        stroke: '#f27a1a',
+        strokeLinecap: 'round',
+        animation: 'dash 1.5s ease-in-out infinite',
+    },
 
-    @keyframes rotate {
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-    @keyframes dash {
-        0% {
-            stroke-dasharray: 1, 150;
-            stroke-dashoffset: 0;
-        }
-        50% {
-            stroke-dasharray: 90, 150;
-            stroke-dashoffset: -35;
-        }
-        100% {
-            stroke-dasharray: 90, 150;
-            stroke-dashoffset: -124;
-        }
-    }
-`
+    '@keyframes rotate': {
+        '100%': {
+            transform: 'rotate(360deg)',
+        },
+    },
+    '@keyframes dash ': {
+        '0%': {
+            strokeDasharray: '1, 150',
+            strokeDashoffset: '0',
+        },
+        '50%': {
+            strokeDasharray: '90, 150',
+            strokeDashoffset: '-35',
+        },
+        '100%': {
+            strokeDasharray: '90, 150',
+            strokeDashoffset: '-124',
+        },
+    },
+})
 
 const Spinner = () => {
     return (
