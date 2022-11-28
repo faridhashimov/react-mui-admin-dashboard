@@ -1,36 +1,41 @@
-import {
-    CalendarMonth,
-    LocalShipping,
-    LocationOn,
-    Person,
-} from '@mui/icons-material'
-import {
-    Box,
-    Button,
-    MenuItem,
-    Paper,
-    Select,
-    Stack,
-    styled,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-} from '@mui/material'
+import CalendarMonth from '@mui/icons-material/CalendarMonth'
+import LocalShipping from '@mui/icons-material/LocalShipping'
+import LocationOn from '@mui/icons-material/LocationOn'
+import Person from '@mui/icons-material/Person'
+
+import { Avatar, styled } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import Paper from '@mui/material/Paper'
+import TableBody from '@mui/material/TableBody'
+import CircularProgress from '@mui/material/CircularProgress'
 import React from 'react'
-import { useEffect } from 'react'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ErrorMsg, Spinner } from '../components'
-import useAdminService from '../services/useAdminService'
+import { ErrorMsg, LoadingContainer } from '../components'
+import {
+    useGetOrderQuery,
+    useUpdateOrderStatusMutation,
+} from '../redux/adminApi/adminApi'
+import { useEffect } from 'react'
 
-const Container = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     padding: '30px',
-})
+    [theme.breakpoints.down('md')]: {
+        overflow: 'hidden',
+        width: '100vw',
+    },
+}))
 
 const OrderContainer = styled(Box)(({ theme }) => ({
     boxShadow: theme.shadows[2],
@@ -38,12 +43,15 @@ const OrderContainer = styled(Box)(({ theme }) => ({
     marginTop: '20px',
 }))
 
-const Header = styled(Box)({
+const Header = styled(Box)(({ theme }) => ({
     padding: '20px',
     display: 'flex',
     justifyContent: 'space-between',
     borderBottom: '1px solid #d8d8d8',
-})
+    [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
+    },
+}))
 
 const OrderTitle = styled(Box)({
     display: 'flex',
@@ -85,12 +93,14 @@ const StyledTypo = styled(Typography)({
     alignItems: 'center',
     marginBottom: '4px',
 })
+
 const StyledSpan = styled(Typography)({
     fontSize: '16px',
     fontWeight: '300',
     color: '#000',
     margin: '3px 0px',
 })
+
 const TableTotal = styled(TableCell)({
     fontSize: '16px',
     fontWeight: '600',
@@ -106,10 +116,37 @@ const Color = styled('div')({
     fontSize: '10px',
 })
 
+const Date = styled(Typography)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '4px',
+    fontSize: '16px',
+    [theme.breakpoints.down('md')]: {
+        marginBottom: '10px',
+    },
+}))
+
+const OrderId = styled(Typography)(({ theme }) => ({
+    fontSize: '14px',
+    color: '#9a9a9a',
+    [theme.breakpoints.down('md')]: {
+        marginBottom: '10px',
+    },
+}))
+
 const SingleOrder = () => {
-    const [status, setStatus] = useState('Pending')
-    const [order, setOrder] = useState(null)
+    const [status, setStatus] = useState('')
     const { orderId } = useParams()
+
+    const { isLoading, isError, data: order } = useGetOrderQuery(orderId)
+    const [
+        updateOrder,
+        {
+            isLoading: isOrderUpdateLoading,
+            isError: isOrderUpdateError,
+            isSuccess: isOrderUpdateSucces,
+        },
+    ] = useUpdateOrderStatusMutation()
     const sum =
         order &&
         order.products
@@ -117,20 +154,19 @@ const SingleOrder = () => {
             .toFixed(2)
     const shipping = 10.0
 
-    const { loading, getOrder } = useAdminService()
-
-    console.log(order)
-
     useEffect(() => {
-        onOrderLoad(orderId)
-    }, [])
+        order && setStatus(order.status)
+    }, [order])
 
     const onStatusChange = (e) => {
         setStatus(e.target.value)
     }
 
-    const onOrderLoad = (id) => {
-        getOrder(id).then((order) => setOrder(order))
+    console.log(isOrderUpdateSucces)
+
+    const onStatusSave = () => {
+        updateOrder({ orderId, status })
+        console.log('render')
     }
 
     return (
@@ -143,30 +179,23 @@ const SingleOrder = () => {
                 Order Detail
             </Typography>
             <OrderContainer>
-                {loading ? (
-                    <Spinner />
-                ) : !loading && order ? (
+                {isLoading || isOrderUpdateLoading ? (
+                    <LoadingContainer>
+                        <CircularProgress />
+                    </LoadingContainer>
+                ) : isError || isOrderUpdateError ? (
+                    <ErrorMsg />
+                ) : (
                     <>
                         <Header>
                             <OrderTitle>
-                                <Typography
-                                    variant="h4"
-                                    fontSize={16}
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        marginBottom: '4px',
-                                    }}
-                                >
+                                <Date variant="h4">
                                     <CalendarMonth />
                                     Wed, Aug 13, 2020, 4:34PM
-                                </Typography>
-                                <Typography
-                                    variant="span"
-                                    sx={{ fontSize: '14px', color: '#9a9a9a' }}
-                                >
+                                </Date>
+                                <OrderId variant="span">
                                     Order ID: {order._id}
-                                </Typography>
+                                </OrderId>
                             </OrderTitle>
                             <Box sx={{ display: 'flex' }}>
                                 <Select
@@ -185,16 +214,21 @@ const SingleOrder = () => {
                                         Cancelled
                                     </MenuItem>
                                 </Select>
-                                <SaveBtn variant="outlined">Save</SaveBtn>
+                                <SaveBtn
+                                    onClick={onStatusSave}
+                                    variant="outlined"
+                                >
+                                    Save
+                                </SaveBtn>
                             </Box>
                         </Header>
                         <OrderInfo>
                             <Stack
                                 mb={4}
                                 sx={{ width: '100%' }}
-                                direction="row"
+                                direction={{ xs: 'column', md: 'row' }}
                             >
-                                <Item flex={1}>
+                                <Item flex={1} mb={2}>
                                     <IconContainer>
                                         <Person />
                                     </IconContainer>
@@ -213,7 +247,7 @@ const SingleOrder = () => {
                                         </StyledSpan>
                                     </OrderTitle>
                                 </Item>
-                                <Item flex={1}>
+                                <Item flex={1} mb={2}>
                                     <IconContainer>
                                         <LocalShipping />
                                     </IconContainer>
@@ -232,7 +266,7 @@ const SingleOrder = () => {
                                         </StyledSpan>
                                     </OrderTitle>
                                 </Item>
-                                <Item flex={1}>
+                                <Item flex={1} mb={2}>
                                     <IconContainer>
                                         <LocationOn />
                                     </IconContainer>
@@ -252,7 +286,15 @@ const SingleOrder = () => {
                                     </OrderTitle>
                                 </Item>
                             </Stack>
-                            <TableContainer component={Paper}>
+                            <TableContainer
+                                sx={{
+                                    border: {
+                                        xs: '1px solid #ddd',
+                                        md: 'none',
+                                    },
+                                }}
+                                component={Paper}
+                            >
                                 <Table
                                     sx={{ minWidth: 700 }}
                                     aria-label="spanning table"
@@ -276,17 +318,13 @@ const SingleOrder = () => {
                                                         alignItems: 'center',
                                                     }}
                                                 >
-                                                    <img
-                                                        style={{
-                                                            height: '40px',
-                                                            width: '40px',
-                                                            borderRadius: '50%',
-                                                            marginRight: '10px',
-                                                        }}
+                                                    <Avatar
                                                         src={product.img[0]}
                                                         alt="product.title"
-                                                    />{' '}
-                                                    {product.title}
+                                                    />
+                                                    <Typography ml={1}>
+                                                        {product.title}
+                                                    </Typography>
                                                 </TableCell>
                                                 <TableCell>
                                                     {product.productSize}
@@ -345,8 +383,27 @@ const SingleOrder = () => {
                                                         padding: '2px 7px',
                                                         borderRadius: '5px',
                                                         backgroundColor:
-                                                            'lightgreen',
-                                                        color: 'green',
+                                                            order.status ===
+                                                            'Delivered'
+                                                                ? '#DCF5E0'
+                                                                : order.status ===
+                                                                  'Pending'
+                                                                ? '#FFE8D0'
+                                                                : order.status ===
+                                                                  'Shipped'
+                                                                ? '#9af2fa'
+                                                                : '#FDCCCC',
+                                                        color:
+                                                            order.status ===
+                                                            'Delivered'
+                                                                ? '#006D0E'
+                                                                : order.status ===
+                                                                  'Pending'
+                                                                ? '#985325'
+                                                                : order.status ===
+                                                                  'Shipped'
+                                                                ? '#014f56'
+                                                                : '#920000',
                                                     }}
                                                 >
                                                     {order.status}
@@ -358,8 +415,6 @@ const SingleOrder = () => {
                             </TableContainer>
                         </OrderInfo>
                     </>
-                ) : (
-                    <ErrorMsg />
                 )}
             </OrderContainer>
         </Container>

@@ -1,4 +1,7 @@
-import { Stack, Typography, styled, Box } from '@mui/material'
+import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
 import Chart from './Chart'
 
 const StatisticsContainer = styled(Box)(({ theme }) => ({
@@ -14,6 +17,9 @@ const RevenueContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('md')]: {
+        marginTop: '20px',
+    },
 }))
 
 const StyledTypo = styled(Typography)({
@@ -35,14 +41,14 @@ const SalesAmount = styled(StyledTypo)({
 
 const RevenueComponent = () => {
     return (
-        <Stack mt={3} direction="row">
+        <Stack mt={3} direction={{ xs: 'column', md: 'row' }}>
             <StatisticsContainer flex={2}>
                 <StyledTypo mb={2} variant="h6" fontWeight={400}>
                     Last 6 Months (income)
                 </StyledTypo>
                 <Chart />
             </StatisticsContainer>
-            <RevenueContainer ml={4} flex={1}>
+            <RevenueContainer ml={{ xs: 0, md: 4 }} flex={1}>
                 <StyledTypo variant="span">Total Revenue</StyledTypo>
                 <Stack direction="column" sx={{ textAlign: 'center' }}>
                     <StyledTypo

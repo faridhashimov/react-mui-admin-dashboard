@@ -1,4 +1,7 @@
-import { styled, TableCell, TableRow, Typography } from '@mui/material'
+import { styled } from '@mui/material'
+import TableCell from '@mui/material/TableCell'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
 import { format, parseISO } from 'date-fns'
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -19,6 +22,9 @@ const StyledLink = styled(Link)({
 })
 
 const OrderItem = ({ data }) => {
+    const firstName = data.userFirstName !== undefined ? data.userFirstName : ''
+    const lastName = data.userLastName !== undefined ? data.userLastName : ''
+
     return (
         <TableRow
             key={data._id}
@@ -31,9 +37,11 @@ const OrderItem = ({ data }) => {
             <TableCell component="th" scope="row">
                 #{`${data._id.slice(0, 5)}...`}
             </TableCell>
-            <TableCell align="left">{`${data.userFirstName} ${data.userLastName}`}</TableCell>
+            <TableCell align="left">{`${firstName} ${lastName}`}</TableCell>
             <TableCell align="left">{data.userEmail}</TableCell>
-            <TableCell align="left">{format(parseISO(data.createdAt), "dd-MMM")}</TableCell>
+            <TableCell align="left">
+                {format(parseISO(data.createdAt), 'dd-MMM')}
+            </TableCell>
             <TableCell align="left">${data.amount}</TableCell>
             <TableCell align="left">
                 <Status

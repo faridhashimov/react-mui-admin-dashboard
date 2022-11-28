@@ -1,5 +1,9 @@
-import { DriveFolderUpload } from '@mui/icons-material'
-import { Box, Button, Input, InputLabel, styled } from '@mui/material'
+import DriveFolderUpload from '@mui/icons-material/DriveFolderUpload'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Input from '@mui/material/Input'
+import InputLabel from '@mui/material/InputLabel'
+import { styled } from '@mui/material'
 import { useState } from 'react'
 
 const Header = styled(Box)(({ theme }) => ({
@@ -16,6 +20,9 @@ const AddContainer = styled(Box)(({ theme }) => ({
     boxShadow: theme.shadows[2],
     borderRadius: theme.shape.borderRadius,
     display: 'flex',
+    [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
+    },
 }))
 
 const AddForm = styled('form')({})
@@ -30,16 +37,19 @@ const InputContainer = styled(Box)({
     gridTemplateColumns: 'repeat(2, 1fr)',
 })
 
-
-const New = ({title, data}) => {
+const New = ({ title, data }) => {
     const [file, setFile] = useState(undefined)
     return (
-        <Box sx={{ padding: '30px', height: '100vh' }}>
+        <Box sx={{ padding: { xs: '10px', md: '30px' }, height: '100vh' }}>
             <Header>{title}</Header>
             <AddContainer mt={3}>
                 <Box
                     flex={1}
-                    sx={{ display: 'flex', justifyContent: 'center' }}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginBottom: { xs: '20px', md: '0px' },
+                    }}
                 >
                     <img
                         height={100}

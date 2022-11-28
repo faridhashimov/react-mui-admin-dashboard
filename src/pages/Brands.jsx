@@ -1,4 +1,6 @@
-import { Box, Typography, styled } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { brands } from '../data'
 
@@ -14,6 +16,9 @@ const BrandsContainer = styled(Box)(({ theme }) => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(6, 1fr)',
     gap: '20px',
+    [theme.breakpoints.down('md')]: {
+        gridTemplateColumns: 'repeat(2, 1fr)',
+    },
 }))
 
 const ImageContainer = styled('div')({

@@ -1,5 +1,6 @@
-import { SentimentVeryDissatisfied } from '@mui/icons-material'
-import { Box, styled } from '@mui/material'
+import SentimentVeryDissatisfied from '@mui/icons-material/SentimentVeryDissatisfied'
+import { styled } from '@mui/material'
+import Box from '@mui/material/Box'
 import { Link } from 'react-router-dom'
 import React from 'react'
 

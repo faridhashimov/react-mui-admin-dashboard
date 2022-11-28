@@ -1,10 +1,11 @@
 import { styled } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
 import { DataGrid } from '@mui/x-data-grid'
 import { userRows, userColumns } from '../data.js'
 import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { Spinner, Error } from '../components'
-import useAdminService from '../services/useAdminService.js'
+import { useState } from 'react'
+import { Error, LoadingContainer } from '../components'
+import { useGetAllUSersQuery } from '../redux/adminApi/adminApi.js'
 
 const Table = styled('div')(({ theme }) => ({
     height: 650,
@@ -14,17 +15,7 @@ const Table = styled('div')(({ theme }) => ({
 }))
 
 const UsersTable = () => {
-    const [customers, setCustomers] = useState(null)
-
-    const { loading, error, getAllUSers } = useAdminService()
-
-    useEffect(() => {
-        onUsersLoad()
-    }, [])
-
-    const onUsersLoad = () => {
-        getAllUSers().then((users) => setCustomers(users))
-    }
+    const { data: customers, isLoading, isError } = useGetAllUSersQuery()
 
     const actionColumn = [
         {
@@ -73,8 +64,12 @@ const UsersTable = () => {
     }
     return (
         <>
-            {loading && <Spinner />}
-            {error && <Error />}
+            {isLoading && (
+                <LoadingContainer>
+                    <CircularProgress />
+                </LoadingContainer>
+            )}
+            {isError && <Error />}
             {customers && (
                 <Table>
                     <DataGrid

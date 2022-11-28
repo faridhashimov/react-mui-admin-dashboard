@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Navigate,
+} from 'react-router-dom'
 import { Main } from './components'
 import {
     Brands,
@@ -15,12 +20,17 @@ import {
     SingleUser,
 } from './pages'
 import { userInputs } from './data'
+import { useSelector } from 'react-redux'
 
 const App = () => {
+    const { user } = useSelector((state) => state.user)
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Home />}>
+                <Route
+                    path="/"
+                    element={user ? <Home /> : <Navigate to="/login" replace />}
+                >
                     <Route index element={<Main />} />
                     <Route path="users">
                         <Route index element={<Customers />} />

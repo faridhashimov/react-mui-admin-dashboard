@@ -1,20 +1,17 @@
-import { DriveFolderUpload } from '@mui/icons-material'
-import {
-    Box,
-    Button,
-    Input,
-    InputLabel,
-    TextField,
-    styled,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-    Typography,
-    Autocomplete,
-    Chip,
-    InputAdornment,
-} from '@mui/material'
-
+import DriveFolderUpload from '@mui/icons-material/DriveFolderUpload'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { styled } from '@mui/material'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Input from '@mui/material/Input'
+import InputLabel from '@mui/material/InputLabel'
+import Autocomplete from '@mui/material/Autocomplete'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
 import {
     getStorage,
     ref,
@@ -38,6 +35,9 @@ const AddContainer = styled(Box)(({ theme }) => ({
     boxShadow: theme.shadows[2],
     borderRadius: theme.shape.borderRadius,
     display: 'flex',
+    [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
+    },
 }))
 
 const AddForm = styled('form')({})
@@ -209,7 +209,7 @@ const NewProduct = ({ title, data }) => {
                 )
                 return getDownloadURL(uploadTask.snapshot.ref)
             })
-            Promise.all(promises).then(allUrls => console.log(allUrls))
+            Promise.all(promises).then((allUrls) => console.log(allUrls))
         }
     }
     console.log(files)
@@ -260,7 +260,7 @@ const NewProduct = ({ title, data }) => {
                         </div>
                     )}
                 </ImagesContainer>
-                <Box flex={2}>
+                <Box flex={2} sx={{ marginTop: { xs: '20px', md: '0px' } }}>
                     <AddForm onSubmit={handleSubmit}>
                         <InputContainer mb={2}>
                             <Box mb={2}>

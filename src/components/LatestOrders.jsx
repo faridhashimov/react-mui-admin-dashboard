@@ -1,22 +1,18 @@
-import {
-    TableContainer,
-    TableHead,
-    TableCell,
-    Button,
-    TableBody,
-    TableRow,
-    Paper,
-    Table,
-    Box,
-    Typography,
-    styled,
-} from '@mui/material'
-import { format, parseISO } from 'date-fns'
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import useAdminService from '../services/useAdminService'
-import Spinner from './Spinner'
-
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { styled } from '@mui/material'
+import Button from '@mui/material/Button'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import Paper from '@mui/material/Paper'
+import TableBody from '@mui/material/TableBody'
+import CircularProgress from '@mui/material/CircularProgress'
+import { format, parseISO } from 'date-fns'
+import { useGetAllOrdersQuery } from '../redux/adminApi/adminApi'
 const StyledTypo = styled(Typography)({
     color: '#9a9a9a',
     lineHeight: 1,
@@ -29,6 +25,10 @@ const TransactionContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('md')]: {
+        overflow: 'hidden',
+        width: '100%',
+    },
 }))
 
 const Status = styled(Typography)(({ theme }) => ({
@@ -42,30 +42,31 @@ const StyledLink = styled(Link)({
 })
 
 const LatestOrders = () => {
-    const [orders, setOrders] = useState([])
-    const { loading, error, getAllOrders } = useAdminService()
-
-    useEffect(() => {
-        onOrdersLoad()
-    }, [])
-
-    console.log(orders)
-
-    const onOrdersLoad = () => {
-        getAllOrders().then((data) => setOrders(data))
-    }
+    const { isLoading, isError, data: orders } = useGetAllOrdersQuery()
 
     return (
         <TransactionContainer mt={3}>
             <StyledTypo variant="span" mb={3} sx={{ fontWeight: 500 }}>
                 Latest Orders
             </StyledTypo>
-            {loading ? (
-                <Spinner />
-            ) : error ? (
-                <p style={{ color: 'red', textAlign: 'center' }}>Something went wrong...</p>
-            ) : (
-                <TableContainer component={Paper}>
+            <TableContainer component={Paper}>
+                {isLoading ? (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            minHeight: '200px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <CircularProgress />
+                    </Box>
+                ) : isError ? (
+                    <p style={{ color: 'red', textAlign: 'center' }}>
+                        Something went wrong...
+                    </p>
+                ) : (
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
@@ -89,16 +90,8 @@ const LatestOrders = () => {
                                     status,
                                     amount,
                                 }) => (
-                                    <TableRow
-                                        key={_id}
-                                        sx={{
-                                            '&:last-child td, &:last-child th':
-                                                {
-                                                    border: 0,
-                                                },
-                                        }}
-                                    >
-                                        <TableCell component="th" scope="row">
+                                    <TableRow key={_id}>
+                                        <TableCell>
                                             {`${_id.slice(0, 5)}...`}
                                         </TableCell>
                                         <TableCell align="left">
@@ -164,8 +157,8 @@ const LatestOrders = () => {
                             )}
                         </TableBody>
                     </Table>
-                </TableContainer>
-            )}
+                )}
+            </TableContainer>
         </TransactionContainer>
     )
 }

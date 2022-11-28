@@ -1,12 +1,16 @@
-import { TableContainer, Tooltip } from '@mui/material'
-import { TableHead } from '@mui/material'
-import { TableCell } from '@mui/material'
-import { Avatar } from '@mui/material'
-import { TableBody } from '@mui/material'
-import { TableRow } from '@mui/material'
-import { Paper } from '@mui/material'
-import { Table } from '@mui/material'
-import { Box, Typography, styled } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { styled } from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import Tooltip from '@mui/material/Tooltip'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import Paper from '@mui/material/Paper'
+import TableBody from '@mui/material/TableBody'
+
 import { format, parseISO } from 'date-fns'
 
 const StyledTypo = styled(Typography)({
@@ -28,59 +32,8 @@ const Status = styled(Typography)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }))
 
-function createData(name, src, calories, fat, carbs, protein, status) {
-    return { name, src, calories, fat, carbs, protein, status }
-}
-
-const rows = [
-    createData(
-        '#1234775',
-        'https://lp2.hm.com/hmgoepprod?set=format%5Bwebp%5D%2Cquality%5B79%5D%2Csource%5B%2F4e%2F3b%2F4e3badd30820eccaed5b3531fb02d42616fd7815.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BLOOKBOOK%5D%2Cres%5Bm%5D%2Chmver%5B1%5D&call=url%5Bfile%3A%2Fproduct%2Fmain%5D',
-        'Slim Fit Linen-blend Shirt',
-        'John Smith',
-        '14 March',
-        '$ 134.99',
-        'Delivered'
-    ),
-    createData(
-        '#2344775',
-        'https://lp2.hm.com/hmgoepprod?set=quality%5B79%5D%2Csource%5B%2Fc5%2F46%2Fc546e8f009fade125334ceb19f34aa2b847d077f.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BLOOKBOOK%5D%2Cres%5Bm%5D%2Chmver%5B1%5D&call=url[file:/product/main]',
-        'Regular Fit Knee-length Cargo Shorts',
-        'Alex Merchant',
-        '12 - March',
-        '$ 14.99',
-        'Pending'
-    ),
-    createData(
-        '#6734775',
-        'https://lp2.hm.com/hmgoepprod?set=format%5Bwebp%5D%2Cquality%5B79%5D%2Csource%5B%2Fa0%2F1b%2Fa01b0e3012660277b6336511cae734da9bb7e6be.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BLOOKBOOK%5D%2Cres%5Bm%5D%2Chmver%5B1%5D&call=url%5Bfile%3A%2Fproduct%2Fmain%5D',
-        'Strappy Sandals',
-        'Michael Keaton',
-        '10 - March',
-        '$ 75.99',
-        'Shipped'
-    ),
-    createData(
-        '#9874775',
-        'https://lp2.hm.com/hmgoepprod?set=format%5Bwebp%5D%2Cquality%5B79%5D%2Csource%5B%2Fa7%2Fda%2Fa7da66b142a546f8babcde6c64a64bb37bf6fec4.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BLOOKBOOK%5D%2Cres%5Bm%5D%2Chmver%5B1%5D&call=url%5Bfile%3A%2Fproduct%2Fmain%5D',
-        'Backpack',
-        'Tom Cruise',
-        '07 - March',
-        '$ 12.99',
-        'Cancelled'
-    ),
-    createData(
-        '#8714775',
-        'https://lp2.hm.com/hmgoepprod?set=format%5Bwebp%5D%2Cquality%5B79%5D%2Csource%5B%2F20%2F03%2F2003400c32ab270f7dd5d02039493c52b0506e85.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BLOOKBOOK%5D%2Cres%5Bm%5D%2Chmver%5B1%5D&call=url%5Bfile%3A%2Fproduct%2Fmain%5D',
-        'Knit Pencil Skirt',
-        'John Smith',
-        '05 - March',
-        '$ 34.99',
-        'Delivered'
-    ),
-]
-
 const LatestTransactions = ({ user, transactions }) => {
+    console.log(transactions)
     return (
         <TransactionContainer mt={3}>
             <StyledTypo variant="span" mb={3} sx={{ fontWeight: 500 }}>
@@ -128,7 +81,7 @@ const LatestTransactions = ({ user, transactions }) => {
                                                 sx={{
                                                     border: '1px solid grey',
                                                 }}
-                                                alt="Remy Sharp"
+                                                alt={product.title}
                                                 src={product.img[0]}
                                             />
                                         </Tooltip>

@@ -1,9 +1,19 @@
-import { Typography, Box } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material'
 import { Widgets, RevenueComponent, LatestOrders } from '../components'
+
+const MainContainer = styled(Box)(({ theme }) => ({
+    padding: '30px',
+    [theme.breakpoints.down('md')]: {
+        padding: '10px',
+        width: '100vw',
+    },
+}))
 
 const Main = () => {
     return (
-        <Box sx={{ padding: '30px' }}>
+        <MainContainer>
             <Typography
                 color={{ color: '#9a9a9a' }}
                 variant="h5"
@@ -16,7 +26,7 @@ const Main = () => {
             <Widgets />
             <RevenueComponent />
             <LatestOrders />
-        </Box>
+        </MainContainer>
     )
 }
 

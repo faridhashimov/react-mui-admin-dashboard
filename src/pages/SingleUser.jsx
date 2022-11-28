@@ -1,9 +1,15 @@
-import { Avatar, Box, Stack, styled, Typography } from '@mui/material'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Chart, Error, LatestTransactions, Spinner } from '../components'
-import useFetch from '../hooks/useFetch'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import Avatar from '@mui/material/Avatar'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material'
+import { useParams } from 'react-router-dom'
+import { Chart, LatestTransactions, LoadingContainer } from '../components'
+import {
+    useGetSingleUserQuery,
+    useGetUserOrdersQuery,
+} from '../redux/adminApi/adminApi'
 
 const Container = styled(Box)({
     display: 'flex',
@@ -51,33 +57,19 @@ const Edit = styled('div')(({ theme }) => ({
 }))
 
 const SingleUser = () => {
-    const [loading, setLoading] = useState(false)
-    const [userInfo, setUserInfo] = useState(null)
-    const [userOrders, setUserOrders] = useState(null)
     const { userId } = useParams()
-    console.log(userId)
 
-    const getData = () => {
-        setLoading(true)
-        let endpoints = [
-            'http://localhost:5000/api/users/' + userId,
-            'http://localhost:5000/api/orders/find/' + userId,
-        ]
-        Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-            ([{ data: userInfo }, { data: orders }]) => {
-                setUserInfo(userInfo)
-                setUserOrders(orders)
-                setLoading(false)
-            }
-        )
-    }
+    const {
+        isLoading: isUserInfoLoading,
+        isError: isUserInfoError,
+        data: userInfo,
+    } = useGetSingleUserQuery(userId)
 
-    useEffect(() => {
-        getData()
-    }, [])
-
-    console.log(userInfo)
-    console.log(userOrders)
+    const {
+        isLoading: isUserOrdersLoading,
+        isError: isUserOrdersError,
+        data: userOrders,
+    } = useGetUserOrdersQuery(userId)
 
     return (
         <Container p={4}>
@@ -85,19 +77,24 @@ const SingleUser = () => {
                 <UserInfoContainer flex={1}>
                     <Edit>Edit</Edit>
                     <StyledTypo variant="h2">Information</StyledTypo>
-                    <Box sx={{ display: 'flex' }} mt={2}>
-                        <Avatar
-                            sx={{ width: 120, height: 120 }}
-                            src={
-                                userInfo?.img
-                                    ? userInfo?.img
-                                    : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
-                            }
-                            alt="avatar"
-                        />
-                        {loading && <Spinner />}
-                        {/* {error && <Error />} */}
-                        {userInfo && (
+                    {isUserInfoLoading || isUserOrdersLoading ? (
+                        <LoadingContainer>
+                            <CircularProgress />
+                        </LoadingContainer>
+                    ) : isUserInfoError || isUserOrdersError ? (
+                        <p>Something went wrong</p>
+                    ) : (
+                        <Box sx={{ display: 'flex' }} mt={2}>
+                            <Avatar
+                                sx={{ width: 120, height: 120 }}
+                                src={
+                                    userInfo?.img
+                                        ? userInfo?.img
+                                        : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
+                                }
+                                alt="avatar"
+                            />
+
                             <Container ml={3}>
                                 <StyledTypo
                                     variant="h3"
@@ -112,8 +109,7 @@ const SingleUser = () => {
                                     <span>Email:</span> {userInfo.email}
                                 </UserInfoSpan>
                                 <UserInfoSpan variant="p">
-                                    <span>Phone:</span>{' '}
-                                    {userInfo?.phone}
+                                    <span>Phone:</span> {userInfo?.phone}
                                 </UserInfoSpan>
                                 <UserInfoSpan variant="p">
                                     <span>Street:</span>{' '}
@@ -123,8 +119,8 @@ const SingleUser = () => {
                                     <span>City:</span> {userInfo.adress.city}
                                 </UserInfoSpan>
                             </Container>
-                        )}
-                    </Box>
+                        </Box>
+                    )}
                 </UserInfoContainer>
                 <UserInfoContainer flex={1}>
                     <StyledTypo variant="h2">
@@ -134,8 +130,13 @@ const SingleUser = () => {
                 </UserInfoContainer>
             </Stack>
             <Box>
-                {loading && <Spinner />}
-                {userOrders && (
+                {isUserOrdersLoading || isUserInfoLoading ? (
+                    <LoadingContainer>
+                        <CircularProgress />
+                    </LoadingContainer>
+                ) : isUserInfoError || isUserOrdersError ? (
+                    <p>Something went wrong</p>
+                ) : (
                     <LatestTransactions
                         user={userInfo.firstName}
                         transactions={userOrders}

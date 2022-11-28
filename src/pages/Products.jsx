@@ -1,17 +1,17 @@
-import {
-    Typography,
-    Box,
-    styled,
-    TextField,
-    Select,
-    MenuItem,
-    Pagination,
-} from '@mui/material'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import Box from '@mui/material/Box'
+import MenuItem from '@mui/material/MenuItem'
+import CircularProgress from '@mui/material/CircularProgress'
+import TextField from '@mui/material/TextField'
+import Select from '@mui/material/Select'
+import Pagination from '@mui/material/Pagination'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Error, ProductItem, Spinner } from '../components'
-import useAdminService from '../services/useAdminService'
+import { Error, LoadingContainer, ProductItem } from '../components'
+import {
+    useLazyGetProductsQuery,
+} from '../redux/adminApi/adminApi'
 
 const Header = styled(Box)({
     display: 'flex',
@@ -33,10 +33,13 @@ const AddNew = styled(Link)({
     },
 })
 
-const Container = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     padding: '30px',
-})
+    [theme.breakpoints.down('md')]: {
+        width: '100vw',
+    },
+}))
 
 const FiltersContainer = styled(Box)(({ theme }) => ({
     padding: '20px',
@@ -48,6 +51,9 @@ const FiltersContainer = styled(Box)(({ theme }) => ({
     marginBottom: '30px',
     display: 'flex',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
+    },
 }))
 
 const ProductsContainer = styled(Box)(({ theme }) => ({
@@ -59,19 +65,22 @@ const ProductsContainer = styled(Box)(({ theme }) => ({
     alignItems: 'flex-end',
 }))
 
-const ProductsGrid = styled(Box)({
+const ProductsGrid = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     display: 'grid',
     gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '15px',
     marginBottom: '20px',
-})
+    [theme.breakpoints.down('md')]: {
+        gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+}))
 
 const Products = () => {
     const location = useLocation()
     const [categoryFilter, setCategoryFilter] = useState('all')
     const [orderFilter, setOrderFilter] = useState('all')
-    const [products, setProducts] = useState(null)
+    // const [products, setProducts] = useState(null)
     const [title, setTitle] = useState('all')
     const [page, setPages] = useState(1)
     const navigate = useNavigate()
@@ -81,10 +90,6 @@ const Products = () => {
     const newOrder = sp.get('order') || 'all'
     const newTitle = sp.get('title') || 'all'
 
-    const { loading, error, getProducts } = useAdminService()
-    // console.log(loading)
-    // console.log(error)
-
     const handleChange = (e, value) => {
         setPages(value)
         navigate(
@@ -93,16 +98,15 @@ const Products = () => {
     }
 
     useEffect(() => {
-        onProductsLoad(newPage, newCategory, newOrder, newTitle)
-    }, [newPage, newCategory, newOrder, newTitle])
+        navigate(`/products?page=${1}`)
+    }, [navigate])
+
+    const [fetchProducts, { data: products, isLoading, isError }] =
+        useLazyGetProductsQuery()
 
     useEffect(() => {
-        navigate(`/products?page=${1}`)
-    }, [])
-
-    const onProductsLoad = (pg, ct, no, tt) => {
-        getProducts(pg, ct, no, tt).then((products) => setProducts(products))
-    }
+        fetchProducts({ newPage, newCategory, newOrder, newTitle })
+    }, [newPage, newCategory, newOrder, newTitle, fetchProducts])
 
     const onCategoryChange = (event) => {
         setCategoryFilter(event.target.value)
@@ -125,7 +129,7 @@ const Products = () => {
         return () => {
             clearTimeout(titleTimeout)
         }
-    }, [title])
+    }, [title, navigate])
 
     const onOrderChange = (event) => {
         setOrderFilter(event.target.value)
@@ -134,17 +138,21 @@ const Products = () => {
         )
     }
 
-    const spinner = loading && !products ? <Spinner /> : null
-    const content =
-        !loading && products ? (
-            <DataContainer
-                products={products}
-                handleChange={handleChange}
-                page={page}
-            />
-        ) : null
+    const spinner = isLoading ? (
+        <LoadingContainer>
+            <CircularProgress />
+        </LoadingContainer>
+    ) : null
 
-    const errorMsg = !loading && error ? <Error /> : null
+    const content = products ? (
+        <DataContainer
+            products={products}
+            handleChange={handleChange}
+            page={page}
+        />
+    ) : null
+
+    const errorMsg = isError ? <Error /> : null
 
     return (
         <Container>
@@ -163,7 +171,10 @@ const Products = () => {
             <FiltersContainer>
                 <TextField
                     size="small"
-                    sx={{ width: '400px' }}
+                    sx={{
+                        width: { xs: '100%', md: '400px' },
+                        marginBottom: { xs: '10px', md: '0px' },
+                    }}
                     id="outlined-basic"
                     variant="outlined"
                     placeholder="Search..."

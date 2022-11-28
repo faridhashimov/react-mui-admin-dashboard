@@ -1,4 +1,6 @@
-import { Typography, Box, styled } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { styled } from '@mui/material'
 import error from '../images/Decrease_3.jpg'
 
 const Container = styled(Box)({

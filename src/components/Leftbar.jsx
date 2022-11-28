@@ -1,17 +1,19 @@
-import {
-    Inventory,
-    Paid,
-    AddBoxRounded,
-    ShoppingCart,
-    AccountCircle,
-    BrandingWatermark,
-    InsertChart,
-    RateReviewSharp,
-    PersonOutline,
-    Home,
-} from '@mui/icons-material'
-import { Box, Typography, List } from '@mui/material'
+import Inventory from '@mui/icons-material/Inventory'
+import Paid from '@mui/icons-material/Paid'
+import AddBoxRounded from '@mui/icons-material/AddBoxRounded'
+import ShoppingCart from '@mui/icons-material/ShoppingCart'
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import BrandingWatermark from '@mui/icons-material/BrandingWatermark'
+import InsertChart from '@mui/icons-material/InsertChart'
+import RateReviewSharp from '@mui/icons-material/RateReviewSharp'
+import PersonOutline from '@mui/icons-material/PersonOutline'
+import Home from '@mui/icons-material/Home'
+import Close from '@mui/icons-material/Close'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import List from '@mui/material/List'
 import { styled } from '@mui/system'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 const StyledListBtn = styled(Link)({
@@ -25,6 +27,7 @@ const StyledListBtn = styled(Link)({
         backgroundColor: '#EDE7FF',
     },
 })
+
 const StyledListItemText = styled(Typography)({
     color: '#9a9a9a',
     fontSize: '16px',
@@ -32,10 +35,46 @@ const StyledListItemText = styled(Typography)({
     marginLeft: 15,
 })
 
-const Leftbar = () => {
+const LeftMenu = styled(Box)(({ theme }) => ({
+    backgroundColor: '#fff',
+    zIndex: 10000,
+    position: 'fixed',
+    top: '0',
+    width: '20%',
+    [theme.breakpoints.down('md')]: {
+        width: '60%',
+        height: '100%',
+    },
+}))
+
+const CloseContainer = styled(Box)(({ theme }) => ({
+    display: 'none',
+    [theme.breakpoints.down('md')]: {
+        display: 'block',
+        position: 'absolute',
+        top: '15px',
+        right: '20px',
+    },
+}))
+
+const Leftbar = ({ openMenu, setOpenMenu }) => {
+    useEffect(() => {
+        if (openMenu) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+    }, [openMenu])
+
     return (
-        <Box sx={{ flex: 2, borderRight: '1px solid #d8d8d8' }}>
-            <Box sx={{ position: 'fixed', top: '0', width: '20%' }}>
+        <Box
+            flex={2}
+            sx={{
+                borderRight: '1px solid #d8d8d8',
+                display: { xs: openMenu ? 'block' : 'none', md: 'block' },
+            }}
+        >
+            <LeftMenu>
                 <Typography
                     variant="h6"
                     sx={{
@@ -49,6 +88,12 @@ const Leftbar = () => {
                 >
                     FRED Admin
                 </Typography>
+                {openMenu && (
+                    <CloseContainer onClick={() => setOpenMenu(false)}>
+                        <Close />
+                    </CloseContainer>
+                )}
+
                 <List
                     sx={{
                         width: '100%',
@@ -56,48 +101,75 @@ const Leftbar = () => {
                     }}
                     component="nav"
                 >
-                    <StyledListBtn to="/">
+                    <StyledListBtn onClick={() => setOpenMenu(false)} to="/">
                         <Home />
                         <StyledListItemText>Home</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/users">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/users"
+                    >
                         <PersonOutline />
                         <StyledListItemText>Users</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/products">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/products"
+                    >
                         <Inventory />
                         <StyledListItemText>Products</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/orders">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/orders"
+                    >
                         <ShoppingCart />
                         <StyledListItemText>Orders</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/products/new">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/products/new"
+                    >
                         <AddBoxRounded />
                         <StyledListItemText>Add product</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/transactions">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/transactions"
+                    >
                         <Paid />
                         <StyledListItemText>Transactions</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/account">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/account"
+                    >
                         <AccountCircle />
                         <StyledListItemText>Account</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/reviews">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/reviews"
+                    >
                         <RateReviewSharp />
                         <StyledListItemText>Reviews</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/brands">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/brands"
+                    >
                         <BrandingWatermark />
                         <StyledListItemText>Brands</StyledListItemText>
                     </StyledListBtn>
-                    <StyledListBtn to="/statistics">
+                    <StyledListBtn
+                        onClick={() => setOpenMenu(false)}
+                        to="/statistics"
+                    >
                         <InsertChart />
                         <StyledListItemText>Stats</StyledListItemText>
                     </StyledListBtn>
                 </List>
-            </Box>
+            </LeftMenu>
         </Box>
     )
 }

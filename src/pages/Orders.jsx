@@ -1,21 +1,20 @@
-import {
-    Typography,
-    Box,
-    styled,
-    TextField,
-    Select,
-    MenuItem,
-    TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    Paper,
-    TableBody,
-} from '@mui/material'
-import { useEffect, useState } from 'react'
-import { OrderItem, Spinner, ErrorMsg } from '../components'
-import useAdminService from '../services/useAdminService'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { styled } from '@mui/material'
+import TextField from '@mui/material/TextField'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import Paper from '@mui/material/Paper'
+import TableBody from '@mui/material/TableBody'
+import CircularProgress from '@mui/material/CircularProgress'
+import { useState } from 'react'
+import { OrderItem, ErrorMsg, LoadingContainer } from '../components'
+import { useGetAllOrdersQuery } from '../redux/adminApi/adminApi'
 
 const Header = styled(Box)({
     display: 'flex',
@@ -24,10 +23,14 @@ const Header = styled(Box)({
     marginBottom: 20,
 })
 
-const Container = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     padding: '30px',
-})
+    [theme.breakpoints.down('md')]: {
+        overflow: 'hidden',
+        width: '100vw',
+    },
+}))
 
 const FiltersContainer = styled(Box)(({ theme }) => ({
     padding: 20,
@@ -43,36 +46,25 @@ const FiltersContainer = styled(Box)(({ theme }) => ({
 
 const Orders = () => {
     const [status, setStatus] = useState('All')
-    const [orders, setOrders] = useState(null)
-
-    const { loading, error, getAllOrders } = useAdminService()
+    const { isError, isLoading, data: orders } = useGetAllOrdersQuery()
 
     const onStatusChange = (event) => {
         setStatus(event.target.value)
     }
 
-    useEffect(() => {
-        onOrdersLoad()
-    }, [])
-
-    console.log(orders)
-
-    const onOrdersLoad = () => {
-        getAllOrders().then((orders) => setOrders(orders))
-    }
-
-    const spinner = loading ? (
+    const spinner = isLoading ? (
         <TableRow>
             <TableCell colSpan={7}>
-                <Spinner />
+                <LoadingContainer>
+                    <CircularProgress />
+                </LoadingContainer>
             </TableCell>
         </TableRow>
     ) : null
-    const content =
-        !loading && orders
-            ? orders.map((order, i) => <OrderItem key={i} data={order} />)
-            : null
-    const errorMsg = error ? <ErrorMsg /> : null
+    const content = orders
+        ? orders.map((order, i) => <OrderItem key={i} data={order} />)
+        : null
+    const errorMsg = isError ? <ErrorMsg /> : null
     return (
         <Container>
             <Header>
@@ -87,7 +79,10 @@ const Orders = () => {
             <FiltersContainer>
                 <TextField
                     size="small"
-                    sx={{ width: '400px' }}
+                    sx={{
+                        width: '400px',
+                        marginRight: { xs: '10px', md: '0px' },
+                    }}
                     id="outlined-basic"
                     variant="outlined"
                     placeholder="Search..."
@@ -98,7 +93,10 @@ const Orders = () => {
                         fullWidth
                         value={status}
                         onChange={onStatusChange}
-                        sx={{ marginRight: '15px', width: '130px' }}
+                        sx={{
+                            marginRight: { xs: '0px', md: '15px' },
+                            width: '130px',
+                        }}
                     >
                         <MenuItem value="All">All</MenuItem>
                         <MenuItem value="Pending">Pending</MenuItem>
