@@ -63,7 +63,7 @@ const Widgets = () => {
         isError: productsCountError,
     } = useGetProductsCountQuery()
 
-    console.log(sales)
+    // console.log(sales)
 
     return (
         <Stack
@@ -104,7 +104,7 @@ const Widgets = () => {
                                 Total Sales
                             </WidgetHeader>
                             <Typography variant="p">
-                                ${sales[0].amount}
+                                ${sales[0].amount.toFixed(0)}
                             </Typography>
                         </Stack>
                     </Box>
