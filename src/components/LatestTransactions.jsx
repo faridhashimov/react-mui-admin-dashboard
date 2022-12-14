@@ -25,6 +25,10 @@ const TransactionContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('md')]: {
+        overflow: 'hidden',
+        width: '100%',
+    },
 }))
 
 const Status = styled(Typography)(({ theme }) => ({
@@ -33,7 +37,6 @@ const Status = styled(Typography)(({ theme }) => ({
 }))
 
 const LatestTransactions = ({ user, transactions }) => {
-    console.log(transactions)
     return (
         <TransactionContainer mt={3}>
             <StyledTypo variant="span" mb={3} sx={{ fontWeight: 500 }}>
