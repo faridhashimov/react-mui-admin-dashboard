@@ -7,13 +7,11 @@ import {
     XAxis,
     YAxis,
 } from 'recharts'
-import { useGetIncomeQuery } from '../redux/adminApi/adminApi'
 
 import { LoadingContainer, ErrorMsg } from '../components'
 import { CircularProgress } from '@mui/material'
 
 const Chart = ({ chartDataLoading, chartDataError, chartData }) => {
-    console.log(chartData)
     return (
         <>
             {chartDataLoading ? (
