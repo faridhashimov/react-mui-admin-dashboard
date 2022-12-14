@@ -153,6 +153,7 @@ const SingleOrder = () => {
             .reduce((sum, prev) => sum + prev.quantity * prev.price, 0)
             .toFixed(2)
     const shipping = 10.0
+    const total = Number(sum + shipping).toFixed(2)
 
     useEffect(() => {
         order && setStatus(order.status)
@@ -366,9 +367,7 @@ const SingleOrder = () => {
                                         <TableRow>
                                             <TableCell colSpan={4} />
                                             <TableCell>Total</TableCell>
-                                            <TableTotal>
-                                                ${sum + shipping}
-                                            </TableTotal>
+                                            <TableTotal>${total}</TableTotal>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell colSpan={4} />
