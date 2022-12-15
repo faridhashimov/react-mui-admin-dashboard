@@ -6,6 +6,7 @@ const LoadingContainer = ({ children }) => {
             sx={{
                 width: '100%',
                 minHeight: '200px',
+                height: '100%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
