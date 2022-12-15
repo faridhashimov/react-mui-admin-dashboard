@@ -18,12 +18,15 @@ import {
     SingleOrder,
     SingleProduct,
     SingleUser,
+    Reviews,
+    Transactions
 } from './pages'
 import { userInputs } from './data'
 import { useSelector } from 'react-redux'
 
 const App = () => {
     const { user } = useSelector((state) => state.user)
+    console.log(user);
     return (
         <Router>
             <Routes>
@@ -52,6 +55,8 @@ const App = () => {
                         <Route path=":orderId" element={<SingleOrder />} />
                     </Route>
                     <Route path="brands" element={<Brands />} />
+                    <Route path="reviews" element={<Reviews />} />
+                    <Route path="transactions" element={<Transactions />} />
                 </Route>
                 <Route path="login" element={<Login />} />
                 <Route path="*" element={<Page404 />} />
