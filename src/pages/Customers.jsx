@@ -2,7 +2,9 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material'
 import { Link } from 'react-router-dom'
+import { userColumns } from '../data.js'
 import { UsersTable } from '../components'
+import { useGetAllUsersQuery } from '../redux/adminApi/adminApi'
 
 const UsersContainer = styled(Box)({
     padding: '30px',
@@ -29,6 +31,7 @@ const AddNew = styled(Link)({
 })
 
 const Customers = () => {
+    const { data, isLoading, isError } = useGetAllUsersQuery()
     return (
         <UsersContainer>
             <Header>
@@ -43,7 +46,12 @@ const Customers = () => {
                     Add New
                 </AddNew>
             </Header>
-            <UsersTable />
+            <UsersTable
+                data={data}
+                isLoading={isLoading}
+                isError={isError}
+                columns={userColumns}
+            />
         </UsersContainer>
     )
 }
