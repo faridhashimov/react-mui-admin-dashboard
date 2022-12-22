@@ -1,11 +1,8 @@
 import { styled } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import { DataGrid } from '@mui/x-data-grid'
-import { userRows, userColumns } from '../data.js'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
 import { Error, LoadingContainer } from '../components'
-import { useGetAllUSersQuery } from '../redux/adminApi/adminApi.js'
 
 const Table = styled('div')(({ theme }) => ({
     height: 650,
@@ -14,9 +11,7 @@ const Table = styled('div')(({ theme }) => ({
     boxShadow: theme.shadows[2],
 }))
 
-const UsersTable = () => {
-    const { data: customers, isLoading, isError } = useGetAllUSersQuery()
-
+const UsersTable = ({ data, isLoading, isError, columns }) => {
     const actionColumn = [
         {
             field: 'action',
@@ -47,7 +42,6 @@ const UsersTable = () => {
                                 borderRadius: '5px',
                                 cursor: 'pointer',
                             }}
-                            onClick={() => handleDelete(params.row._id)}
                         >
                             Delete
                         </div>
@@ -57,11 +51,6 @@ const UsersTable = () => {
         },
     ]
 
-    const [info, setInfo] = useState(userRows)
-
-    const handleDelete = (id) => {
-        setInfo(info.filter((item) => item.id !== id))
-    }
     return (
         <>
             {isLoading && (
@@ -70,11 +59,11 @@ const UsersTable = () => {
                 </LoadingContainer>
             )}
             {isError && <Error />}
-            {customers && (
+            {data && (
                 <Table>
                     <DataGrid
-                        rows={customers}
-                        columns={userColumns.concat(actionColumn)}
+                        rows={data}
+                        columns={columns.concat(actionColumn)}
                         getRowId={(row) => row._id}
                         pageSize={10}
                         rowsPerPageOptions={[10]}
