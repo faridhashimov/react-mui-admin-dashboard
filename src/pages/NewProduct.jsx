@@ -1,7 +1,16 @@
+import { useState } from 'react'
+
+import {
+    getStorage,
+    ref,
+    uploadBytesResumable,
+    getDownloadURL,
+} from 'firebase/storage'
+import app from '../firebase'
+
 import DriveFolderUpload from '@mui/icons-material/DriveFolderUpload'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import { styled } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -12,14 +21,9 @@ import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
-import {
-    getStorage,
-    ref,
-    uploadBytesResumable,
-    getDownloadURL,
-} from 'firebase/storage'
-import app from '../firebase'
-import { useState } from 'react'
+import CloseIcon from '@mui/icons-material/Close'
+import { styled } from '@mui/material'
+import { useAddProductMutation } from '../redux/adminApi/adminApi'
 
 const Header = styled(Box)(({ theme }) => ({
     padding: 20,
@@ -41,16 +45,19 @@ const AddContainer = styled(Box)(({ theme }) => ({
 }))
 
 const AddForm = styled('form')({})
+
 const StyledInput = styled(Input)({
     fontSize: '16px',
     fontWeight: 400,
     width: '80%',
     paddingLeft: 1,
 })
+
 const StyledLabel = styled(InputLabel)({
     fontSize: '16px',
     fontWeight: 500,
 })
+
 const InputContainer = styled(Box)({
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
@@ -63,15 +70,37 @@ const InputRadio = styled(FormControlLabel)({
 
     color: '#666',
 })
+
 const StyledTextField = styled(TextField)({
     width: '80%',
     fontSize: '12px',
 })
+
 const ImagesContainer = styled(Box)({
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '5px',
     padding: '10px',
+})
+
+const ImageContainer = styled(Box)({
+    height: '100px',
+    width: '70px',
+    border: '1px solid grey',
+    position: 'relative',
+})
+
+const Image = styled('img')({
+    height: '100%',
+    width: '100%',
+    objectFit: 'contain',
+})
+
+const ImageInput = styled('input')({
+    fontSize: '16px',
+    fontWeight: 400,
+    width: '80%',
+    paddingLeft: 1,
 })
 
 const allCategories = [
@@ -141,13 +170,15 @@ const allColors = [
 ]
 
 const NewProduct = ({ title, data }) => {
-    const [files, setFiles] = useState([])
-    // const [images, setImages] = useState([])
+    const [urls, setUrls] = useState([])
+    const [images, setImages] = useState([])
     const [input, setInput] = useState({})
     const [category, setCategory] = useState([])
     const [size, setSize] = useState([])
     const [status, setStatus] = useState([])
     const [color, setColor] = useState([])
+
+    const [addProduct, { isError }] = useAddProductMutation()
 
     const obj = {
         ...input,
@@ -155,9 +186,8 @@ const NewProduct = ({ title, data }) => {
         size,
         status,
         color,
+        img: [...urls],
     }
-
-    console.log(obj)
 
     const onInputChange = (e) => {
         setInput({
@@ -166,79 +196,100 @@ const NewProduct = ({ title, data }) => {
         })
     }
 
+    const onImageDelete = (element) => {
+        setImages(images.filter((item) => item !== element))
+    }
+
+    const handleChange = (e) => {
+        for (let i = 0; i < e.target.files.length; i++) {
+            const newImage = e.target.files[i]
+            // newImage['id'] = Math.random()
+            setImages((prev) => [...prev, newImage])
+            const fileName = new Date().getTime() + newImage.name
+            const storage = getStorage(app)
+            const storageRef = ref(storage, fileName)
+
+            const uploadTask = uploadBytesResumable(storageRef, newImage)
+            // promises.push(uploadTask)
+            // Register three observers:
+            // 1. 'state_changed' observer, called any time the state changes
+            // 2. Error observer, called on failure
+            // 3. Completion observer, called on successful completion
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    // Observe state change events such as progress, pause, and resume
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    const progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    console.log('Upload is ' + progress + '% done')
+                    switch (snapshot.state) {
+                        case 'paused':
+                            console.log('Upload is paused')
+                            break
+                        case 'running':
+                            console.log('Upload is running')
+                            break
+                        default:
+                    }
+                },
+                (error) => {
+                    // Handle unsuccessful uploads
+                    console.log(error)
+                },
+
+                async () => {
+                    // Handle successful uploads on complete
+                    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                    await getDownloadURL(uploadTask.snapshot.ref).then(
+                        (downloadURL) => {
+                            console.log('File available at', downloadURL)
+                            setUrls((prev) => [...prev, downloadURL])
+                        }
+                    )
+                }
+            )
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if (files) {
-            const promises = files.map((file) => {
-                const fileName = new Date().getTime() + file.name
-                const storage = getStorage(app)
-                const storageRef = ref(storage, fileName)
-
-                const uploadTask = uploadBytesResumable(storageRef, file)
-
-                // Register three observers:
-                // 1. 'state_changed' observer, called any time the state changes
-                // 2. Error observer, called on failure
-                // 3. Completion observer, called on successful completion
-                uploadTask.on(
-                    'state_changed',
-                    (snapshot) => {
-                        // Observe state change events such as progress, pause, and resume
-                        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                        const progress =
-                            (snapshot.bytesTransferred / snapshot.totalBytes) *
-                            100
-                        console.log('Upload is ' + progress + '% done')
-                        switch (snapshot.state) {
-                            case 'paused':
-                                console.log('Upload is paused')
-                                break
-                            case 'running':
-                                console.log('Upload is running')
-                                break
-                            default:
-                        }
-                    },
-                    (error) => {
-                        // Handle unsuccessful uploads
-                    }
-
-                    // Handle successful uploads on complete
-                    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                )
-                return getDownloadURL(uploadTask.snapshot.ref)
-            })
-            Promise.all(promises).then((allUrls) => console.log(allUrls))
-        }
+        addProduct({
+            ...input,
+            category,
+            size,
+            status,
+            color,
+            img: [...urls],
+        })
     }
-    console.log(files)
+
+    console.log(isError)
 
     return (
         <Box sx={{ padding: '30px', height: '100vh' }}>
             <Header>Add New Product</Header>
             <AddContainer mt={3}>
                 <ImagesContainer flex={1}>
-                    {files.length > 0 ? (
-                        files.map((item, i) => (
-                            <div
-                                key={i}
-                                style={{
-                                    height: '100px',
-                                    width: '70px',
-                                    border: '1px solid grey',
-                                }}
-                            >
-                                <img
-                                    style={{
-                                        height: '100%',
-                                        width: '100%',
-                                        objectFit: 'contain',
+                    {images.length > 0 ? (
+                        images.map((item, i) => (
+                            <ImageContainer key={i}>
+                                <CloseIcon
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '0px',
+                                        right: '0px',
+                                        fontSize: '15px',
+                                        cursor: 'pointer',
                                     }}
+                                    onClick={() => onImageDelete(item)}
+                                />
+                                <Image
                                     src={URL.createObjectURL(item)}
                                     alt="avatar"
                                 />
-                            </div>
+                            </ImageContainer>
                         ))
                     ) : (
                         <div
@@ -278,19 +329,13 @@ const NewProduct = ({ title, data }) => {
                                         sx={{ marginLeft: '30px' }}
                                     />
                                 </StyledLabel>
-                                <StyledInput
+                                <ImageInput
                                     id="file"
                                     sx={{ display: 'none' }}
                                     name="image"
                                     multiple
                                     type="file"
-                                    onChange={(e) =>
-                                        setFiles((files) => [
-                                            ...files,
-                                            e.target.files[0],
-                                        ])
-                                    }
-                                    // onChange={(e) => setFile(e.target.files[0])}
+                                    onChange={handleChange}
                                 />
                             </Box>
                             <Box mb={2}>
