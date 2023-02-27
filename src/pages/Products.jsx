@@ -9,9 +9,7 @@ import { styled } from '@mui/material'
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Error, LoadingContainer, ProductItem } from '../components'
-import {
-    useLazyGetProductsQuery,
-} from '../redux/adminApi/adminApi'
+import { useLazyGetProductsQuery } from '../redux/adminApi/adminApi'
 
 const Header = styled(Box)({
     display: 'flex',
@@ -80,7 +78,6 @@ const Products = () => {
     const location = useLocation()
     const [categoryFilter, setCategoryFilter] = useState('all')
     const [orderFilter, setOrderFilter] = useState('all')
-    // const [products, setProducts] = useState(null)
     const [title, setTitle] = useState('all')
     const [page, setPages] = useState(1)
     const navigate = useNavigate()
@@ -101,7 +98,7 @@ const Products = () => {
         navigate(`/products?page=${1}`)
     }, [navigate])
 
-    const [fetchProducts, { data: products, isLoading, isError }] =
+    const [fetchProducts, { data: products, isLoading, isError, isFetching }] =
         useLazyGetProductsQuery()
 
     useEffect(() => {
@@ -138,19 +135,21 @@ const Products = () => {
         )
     }
 
-    const spinner = isLoading ? (
-        <LoadingContainer>
-            <CircularProgress />
-        </LoadingContainer>
-    ) : null
+    const spinner =
+        isLoading || isFetching ? (
+            <LoadingContainer>
+                <CircularProgress />
+            </LoadingContainer>
+        ) : null
 
-    const content = products ? (
-        <DataContainer
-            products={products}
-            handleChange={handleChange}
-            page={page}
-        />
-    ) : null
+    const content =
+        products && !isFetching ? (
+            <DataContainer
+                products={products}
+                handleChange={handleChange}
+                page={page}
+            />
+        ) : null
 
     const errorMsg = isError ? <Error /> : null
 
