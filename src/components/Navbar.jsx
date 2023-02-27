@@ -4,7 +4,6 @@ import Search from '@mui/icons-material/Search'
 import NotificationsActive from '@mui/icons-material/NotificationsActive'
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown'
 import MenuIcon from '@mui/icons-material/Menu'
-// import CloseIcon from '@mui/icons-material/Close'
 
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -117,7 +116,7 @@ const Navbar = ({ openMenu, setOpenMenu }) => {
                             height: '100%',
                             padding: '0px 10px',
                         }}
-                        placeholder="search..."
+                        placeholder="search users orders by email adress..."
                     />
                     <SearchIconContainer>
                         <Search />
