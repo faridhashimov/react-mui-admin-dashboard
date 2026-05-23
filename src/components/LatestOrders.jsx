@@ -50,6 +50,8 @@ const LatestOrders = () => {
         data: orders,
     } = useGetAllOrdersQuery({ email, status })
 
+    console.log('LatestOrders data:', orders) // Debugging line to check orders data
+
     return (
         <TransactionContainer mt={3}>
             <StyledTypo variant="span" mb={3} sx={{ fontWeight: 500 }}>
