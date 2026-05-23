@@ -5,6 +5,7 @@ const baseQuery = fetchBaseQuery({
     tagTypes: ['Products', 'Orders', 'Users', 'Reviews'],
     baseUrl: 'https://ecommerce-store-backend.vercel.app/api/',
     prepareHeaders: (headers, { getState }) => {
+        console.log('Preparing headers, current state:', getState()) // Debugging line to check state during header preparation
         const token = getState().user?.user?.accessToken
         if (token) {
             headers.set('token', `Bearer ${token}`)

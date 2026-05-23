@@ -91,6 +91,8 @@ const Navbar = ({ openMenu, setOpenMenu }) => {
     const onLogOut = () => {
         dispatch(logOut())
     }
+
+    console.log('Navbar rendered, openMenu:', openMenu) // Debugging line to check Navbar render and openMenu state
     return (
         <Box
             sx={{
