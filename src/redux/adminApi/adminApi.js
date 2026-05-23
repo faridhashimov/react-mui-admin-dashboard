@@ -17,7 +17,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions)
 
     if (result?.data?.status === 403) {
-        console.log('Request refresh token')
         const refreshResult = await baseQuery(
             { url: 'auth/refresh', method: 'GET' },
             api,
