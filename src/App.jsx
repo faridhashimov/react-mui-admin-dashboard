@@ -26,6 +26,7 @@ import { userInputs } from './data'
 
 const App = () => {
     const { user } = useSelector((state) => state.user)
+    console.log('Current user:', user) // Debugging line to check user state
     return (
         <Router>
             <Routes>

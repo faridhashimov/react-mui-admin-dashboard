@@ -32,6 +32,8 @@ const AddNew = styled(Link)({
 
 const Customers = () => {
     const { data, isLoading, isError } = useGetAllUsersQuery()
+
+    console.log('Users data:', data) // Debugging line to check users data
     return (
         <UsersContainer>
             <Header>
