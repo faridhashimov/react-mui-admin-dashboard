@@ -12,7 +12,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import Typography from '@mui/material/Typography'
-import { CircularProgress, styled } from '@mui/material'
+import { Alert, CircularProgress, styled } from '@mui/material'
 import { Navigate } from 'react-router-dom'
 import { useLoginUserMutation } from '../redux/adminApi/adminApi'
 
@@ -46,6 +46,8 @@ const Login = () => {
         showPassword: false,
     })
 
+    const [isAdmin, setIsAdmin] = useState(false)
+
     const [showPrompt, setShowPrompt] = useState(false)
     const [loginUser, { isError, isLoading, isSuccess }] =
         useLoginUserMutation()
@@ -71,7 +73,7 @@ const Login = () => {
         e.preventDefault()
         try {
             const user = await loginUser(credentials).unwrap()
-            console.log(isSuccess)
+            setIsAdmin(user.isAdmin)
             dispatch(setUserData(user))
         } catch (err) {}
     }
@@ -80,13 +82,7 @@ const Login = () => {
         <Container>
             {isLoading ? (
                 <CircularProgress />
-            ) : isError ? (
-                <Box>
-                    <Typography sx={{ color: 'red' }}>
-                        Something went wrong...
-                    </Typography>
-                </Box>
-            ) : isSuccess ? (
+            ) : isSuccess && isAdmin ? (
                 <Navigate to={'/'} />
             ) : (
                 <LoginContainer>
@@ -94,6 +90,14 @@ const Login = () => {
                         <Typography variant="h4" textAlign={'center'} mb={3}>
                             Log In
                         </Typography>
+                        {isError && (
+                            <Alert
+                                sx={{ marginBottom: '10px' }}
+                                severity="error"
+                            >
+                                Wrong credentials!
+                            </Alert>
+                        )}
                         <StyledLabel htmlFor="email">Email</StyledLabel>
                         <OutlinedInput
                             sx={{ marginBottom: '20px' }}

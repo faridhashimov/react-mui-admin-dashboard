@@ -1,3 +1,6 @@
+import Star from '@mui/icons-material/Star'
+import StarHalf from '@mui/icons-material/StarHalf'
+import StarBorder from '@mui/icons-material/StarBorder'
 
 export const userColumns = [
     { field: '_id', headerName: 'ID', width: 90 },
@@ -41,7 +44,7 @@ export const userColumns = [
     {
         field: 'lastName',
         headerName: 'Last name',
-        width: 190,
+        width: 178,
         renderCell: (params) => {
             return (
                 <>
@@ -72,103 +75,126 @@ export const userColumns = [
         width: 200,
     },
 ]
+export const reviewColumns = [
+    { field: '_id', headerName: 'ID', width: 90 },
+    {
+        field: 'title',
+        headerName: 'Review Title',
+        width: 305,
+    },
+    {
+        field: 'name',
+        headerName: 'Name',
+        width: 100,
+    },
+    {
+        field: 'rating',
+        headerName: 'Rating',
+        type: 'number',
+        headerAlign: 'left',
+        align: 'left',
+        width: 140,
+        renderCell: (params) => {
+            return (
+                <div style={{ display: 'flex' }}>
+                    <>
+                        <span
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                color: '#ffc000',
+                            }}
+                        >
+                            {params.row.rating >= 1 ? (
+                                <Star sx={{ fontSize: '17px' }} />
+                            ) : params.row.rating >= 0.5 ? (
+                                <StarHalf sx={{ fontSize: '17px' }} />
+                            ) : (
+                                <StarBorder sx={{ fontSize: '17px' }} />
+                            )}
+                        </span>
+                        <span
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                color: '#ffc000',
+                            }}
+                        >
+                            {params.row.rating >= 2 ? (
+                                <Star sx={{ fontSize: '17px' }} />
+                            ) : params.row.rating >= 1.5 ? (
+                                <StarHalf sx={{ fontSize: '17px' }} />
+                            ) : (
+                                <StarBorder sx={{ fontSize: '17px' }} />
+                            )}
+                        </span>
 
-export const userRows = [
-    {
-        id: 1,
-        lastName: 'Snow',
-        firstName: 'Jon',
-        age: 35,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
+                        <span
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                color: '#ffc000',
+                            }}
+                        >
+                            {params.row.rating >= 3 ? (
+                                <Star sx={{ fontSize: '17px' }} />
+                            ) : params.row.rating >= 2.5 ? (
+                                <StarHalf sx={{ fontSize: '17px' }} />
+                            ) : (
+                                <StarBorder sx={{ fontSize: '17px' }} />
+                            )}
+                        </span>
+
+                        <span
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                color: '#ffc000',
+                            }}
+                        >
+                            {params.row.rating >= 4 ? (
+                                <Star sx={{ fontSize: '17px' }} />
+                            ) : params.row.rating >= 3.5 ? (
+                                <StarHalf sx={{ fontSize: '17px' }} />
+                            ) : (
+                                <StarBorder sx={{ fontSize: '17px' }} />
+                            )}
+                        </span>
+
+                        <span
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                color: '#ffc000',
+                            }}
+                        >
+                            {params.row.rating >= 5 ? (
+                                <Star sx={{ fontSize: '17px' }} />
+                            ) : params.row.rating >= 4.5 ? (
+                                <StarHalf sx={{ fontSize: '17px' }} />
+                            ) : (
+                                <StarBorder sx={{ fontSize: '17px' }} />
+                            )}
+                        </span>
+                    </>
+                </div>
+            )
+        },
     },
     {
-        id: 2,
-        lastName: 'Lannister',
-        firstName: 'Cersei',
-        age: 42,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 3,
-        lastName: 'Lannister',
-        firstName: 'Jaime',
-        age: 45,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 4,
-        lastName: 'Stark',
-        firstName: 'Arya',
-        age: 16,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 5,
-        lastName: 'Targaryen',
-        firstName: 'Daenerys',
-        age: 23,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 6,
-        lastName: 'Melisandre',
-        firstName: 'Raynolds',
-        age: 150,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 7,
-        lastName: 'Clifford',
-        firstName: 'Ferrara',
-        age: 44,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 8,
-        lastName: 'Frances',
-        firstName: 'Rossini',
-        age: 36,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 9,
-        lastName: 'Roxie',
-        firstName: 'Harvey',
-        age: 65,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 10,
-        lastName: 'Kelvin',
-        firstName: 'James',
-        age: 65,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 11,
-        lastName: 'Kelvin',
-        firstName: 'James',
-        age: 65,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
-    },
-    {
-        id: 12,
-        lastName: 'Kelvin',
-        firstName: 'James',
-        age: 65,
-        email: 'info@gmail.com',
-        img: 'https://minimaltoolkit.com/images/randomdata/female/49.jpg',
+        field: 'createdAt',
+        headerName: 'Date',
+        width: 100,
+        renderCell: (params) => {
+            const dateOfBirth = new Date(params.row.createdAt)
+            const date = dateOfBirth.toLocaleDateString()
+            return <>{date}</>
+        },
     },
 ]
 

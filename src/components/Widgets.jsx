@@ -14,6 +14,10 @@ import {
     useGetSalesQuery,
     useGetUsersCountQuery,
 } from '../redux/adminApi/adminApi'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+// import { useDispatch } from 'react-redux'
+// import { logOut } from '../redux/userSlice'
 
 const WidgetContainer = styled(Box)(({ theme }) => ({
     padding: 20,
@@ -41,10 +45,14 @@ const WidgetHeader = styled(Typography)({
 })
 
 const Widgets = () => {
+    const navigate = useNavigate()
+    // const dispatch = useDispatch()
+
     const {
         data: usersCount,
         isLoading: isLoadingUserSCount,
         isError: usersCountError,
+        error,
     } = useGetUsersCountQuery()
     const {
         data: ordersCount,
@@ -63,7 +71,13 @@ const Widgets = () => {
         isError: productsCountError,
     } = useGetProductsCountQuery()
 
-    // console.log(sales)
+    useEffect(() => {
+        if (error?.data === 'Token is not valid') {
+            navigate('/login')
+        }
+        // dispatch(logOut())
+
+    }, [error?.data, navigate])
 
     return (
         <Stack

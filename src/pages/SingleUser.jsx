@@ -9,14 +9,19 @@ import { Chart, LatestTransactions, LoadingContainer } from '../components'
 import {
     useGetSingleUserQuery,
     useGetUserOrdersQuery,
+    useGetUserSixMonthOrdersQuery,
 } from '../redux/adminApi/adminApi'
 
-const Container = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
-})
+    [theme.breakpoints.down('md')]: {
+        padding: '10px',
+        width: '100vw',
+    },
+}))
 
-const UserInfoContainer = styled(Container)(({ theme }) => ({
+const InfoContainer = styled(Container)(({ theme }) => ({
     padding: 20,
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[2],
@@ -71,10 +76,16 @@ const SingleUser = () => {
         data: userOrders,
     } = useGetUserOrdersQuery(userId)
 
+    const {
+        isError: chartDataError,
+        isLoading: chartDataLoading,
+        data: chartData,
+    } = useGetUserSixMonthOrdersQuery(userId)
+
     return (
         <Container p={4}>
-            <Stack direction="row" spacing={3}>
-                <UserInfoContainer flex={1}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+                <InfoContainer flex={1}>
                     <Edit>Edit</Edit>
                     <StyledTypo variant="h2">Information</StyledTypo>
                     {isUserInfoLoading || isUserOrdersLoading ? (
@@ -84,7 +95,13 @@ const SingleUser = () => {
                     ) : isUserInfoError || isUserOrdersError ? (
                         <p>Something went wrong</p>
                     ) : (
-                        <Box sx={{ display: 'flex' }} mt={2}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: { xs: 'column', md: 'row' },
+                            }}
+                            mt={2}
+                        >
                             <Avatar
                                 sx={{ width: 120, height: 120 }}
                                 src={
@@ -95,7 +112,7 @@ const SingleUser = () => {
                                 alt="avatar"
                             />
 
-                            <Container ml={3}>
+                            <Container ml={{ md: 3, xs: 0 }}>
                                 <StyledTypo
                                     variant="h3"
                                     sx={{ fontSize: '32px' }}
@@ -121,13 +138,17 @@ const SingleUser = () => {
                             </Container>
                         </Box>
                     )}
-                </UserInfoContainer>
-                <UserInfoContainer flex={1}>
+                </InfoContainer>
+                <InfoContainer flex={1}>
                     <StyledTypo variant="h2">
                         Last 6 Months (spending)
                     </StyledTypo>
-                    <Chart />
-                </UserInfoContainer>
+                    <Chart
+                        chartDataError={chartDataError}
+                        chartDataLoading={chartDataLoading}
+                        chartData={chartData}
+                    />
+                </InfoContainer>
             </Stack>
             <Box>
                 {isUserOrdersLoading || isUserInfoLoading ? (

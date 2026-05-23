@@ -163,11 +163,8 @@ const SingleOrder = () => {
         setStatus(e.target.value)
     }
 
-    console.log(isOrderUpdateSucces)
-
     const onStatusSave = () => {
         updateOrder({ orderId, status })
-        console.log('render')
     }
 
     return (

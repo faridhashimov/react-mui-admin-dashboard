@@ -42,7 +42,13 @@ const StyledLink = styled(Link)({
 })
 
 const LatestOrders = () => {
-    const { isLoading, isError, data: orders } = useGetAllOrdersQuery()
+    const email = 'all'
+    const status = 'all'
+    const {
+        isLoading,
+        isError,
+        data: orders,
+    } = useGetAllOrdersQuery({ email, status })
 
     return (
         <TransactionContainer mt={3}>

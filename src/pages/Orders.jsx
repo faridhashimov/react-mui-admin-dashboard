@@ -14,7 +14,11 @@ import TableBody from '@mui/material/TableBody'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useState } from 'react'
 import { OrderItem, ErrorMsg, LoadingContainer } from '../components'
-import { useGetAllOrdersQuery } from '../redux/adminApi/adminApi'
+import {
+    useGetAllOrdersQuery,
+} from '../redux/adminApi/adminApi'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const Header = styled(Box)({
     display: 'flex',
@@ -45,12 +49,39 @@ const FiltersContainer = styled(Box)(({ theme }) => ({
 }))
 
 const Orders = () => {
-    const [status, setStatus] = useState('All')
-    const { isError, isLoading, data: orders } = useGetAllOrdersQuery()
+    const [orderStatus, setOrderStatus] = useState('All')
+    const [search, setSearch] = useState('all')
+    const location = useLocation()
+    const navigate = useNavigate()
+    const sp = new URLSearchParams(location.search)
+    const email = sp.get('email') || 'all'
+    const statusName = sp.get('status') || 'all'
+    const status = statusName === 'All' ? 'all' : statusName
+
+    const {
+        isError,
+        isLoading,
+        data: orders,
+    } = useGetAllOrdersQuery({ email, status })
 
     const onStatusChange = (event) => {
-        setStatus(event.target.value)
+        setOrderStatus(event.target.value)
+        navigate(`/orders?email=${email}&status=${event.target.value}`)
     }
+
+    useEffect(() => {
+        navigate(`/orders?email=${email}&status=${orderStatus}`)
+    }, [email, orderStatus, navigate])
+
+    useEffect(() => {
+        const titleTimeout = setTimeout(() => {
+            navigate(`/orders?email=${search}&status=${status}`)
+        }, 500)
+
+        return () => {
+            clearTimeout(titleTimeout)
+        }
+    }, [search])
 
     const spinner = isLoading ? (
         <TableRow>
@@ -79,19 +110,21 @@ const Orders = () => {
             <FiltersContainer>
                 <TextField
                     size="small"
+                    onChange={(e) => setSearch(e.target.value)}
+                    // value={search}
                     sx={{
                         width: '400px',
                         marginRight: { xs: '10px', md: '0px' },
                     }}
                     id="outlined-basic"
                     variant="outlined"
-                    placeholder="Search..."
+                    placeholder="Search by user email..."
                 />
                 <Box>
                     <Select
                         size="small"
                         fullWidth
-                        value={status}
+                        value={orderStatus}
                         onChange={onStatusChange}
                         sx={{
                             marginRight: { xs: '0px', md: '15px' },
